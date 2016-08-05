@@ -24,6 +24,10 @@ module Cell
       ActiveSupport.on_load(:action_controller) do
         self.class_eval do
           include ::Cell::RailsExtensions::ActionController
+
+          if Rails.env == "development"
+            after_filter :reset_cell_templates
+          end
         end
       end
 
@@ -35,9 +39,11 @@ module Cell
 
       require "cell/rails/collection"
       require "cell/rails/constant_for"
+      require "cell/rails/reset_templates"
 
       Cell::Collection.send :include, Cell::RailsExtension::Collection
       Cell::ViewModel.send :include, Cell::RailsExtension::ConstantFor
+      Cell::ViewModel.send :extend, Cell::RailsExtension::ResetTemplates
     end
 
     initializer "cells.include_default_helpers" do
@@ -63,13 +69,6 @@ module Cell
       ViewModel.send(:include, Cell::Slim) if Cell.const_defined?(:Slim, false)
     end
     #   ViewModel.template_engine = app.config.app_generators.rails.fetch(:template_engine, "erb").to_s
-
-    initializer("cells.development") do |app|
-      if Rails.env == "development"
-        require "cell/development"
-        ViewModel.send(:include, Development)
-      end
-    end
 
     rake_tasks do
       load "tasks/cells.rake"

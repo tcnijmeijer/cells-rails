@@ -16,6 +16,10 @@ module Cell
       def concept(name, model=nil, options={}, &block)
         cell(name, model, options, ::Cell::Concept, &block)
       end
+
+      def reset_cell_templates
+        ::Cell::ViewModel.reset_templates
+      end
     end
 
     module ActionView
