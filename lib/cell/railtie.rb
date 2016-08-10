@@ -25,9 +25,7 @@ module Cell
         self.class_eval do
           include ::Cell::RailsExtensions::ActionController
 
-          if Rails.env == "development"
-            after_filter :reset_cell_templates
-          end
+          after_filter :reset_cell_templates if (Rails.env == "development")
         end
       end
 
